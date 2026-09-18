@@ -125,11 +125,7 @@
 
   url |>
     httr2::url_build() |>
-    httr2::request()
-
-  # url |>
-  # httr2::url_build() |>
-  # .build_request()
+    .build_pubchem_request()
 }
 
 #' Generic function to parse one of the annotation helpers
