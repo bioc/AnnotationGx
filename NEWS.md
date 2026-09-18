@@ -1,3 +1,17 @@
+# Changes in version 0.99.11
+
+- Remove bundled GDSC metadata and dedicated source files; direct users to
+  official downloads subject to the upstream usage policy.
+- Use CCLE metadata in introductory examples.
+- Keep ChEMBL vignette examples evaluated while reporting service failures
+  without aborting the build.
+- Test ChEMBL response handling with deterministic fixtures, including HTML
+  responses, and retain a guarded live endpoint test.
+- Support the updated UniChem source schema while preserving the documented
+  output columns and representing unavailable release metadata as `NA`.
+- Apply the existing request timeout and retry policy to PubChem annotation
+  requests so temporary HTTP 503 responses can recover.
+
 # Changes in version 0.99.8
 
 - Address Bioconductor submission review feedback.
