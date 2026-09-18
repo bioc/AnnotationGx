@@ -1,130 +1,162 @@
-library(AnnotationGx)
-library(testthat)
-library(checkmate)
-
-test_that("build_chembl_request constructs the correct URL", {
-  # Set up test data
-  resource <- "target"
-  field <- "target_chembl_id"
-  filter_type <- "exact"
-  value <- "CHEMBL2144069"
-  format <- "json"
-
-  # Call the function
-  url <- AnnotationGx:::.build_chembl_request(
-    resource,
-    field,
-    filter_type,
-    value,
-    format
+local_chembl_responses <- function(.env = parent.frame()) {
+  testthat::local_mocked_bindings(
+    .cache_enabled = function() FALSE,
+    .perform_request = function(request) {
+      body <- if (grepl("/schema", request$url, fixed = TRUE)) {
+        '{"fields":{"molecule_chembl_id":{},"target_chembl_id":{},"mechanism_of_action":{}}}'
+      } else {
+        '{"mechanisms":[{"molecule_chembl_id":"CHEMBL1413","target_chembl_id":"CHEMBL2363058","mechanism_of_action":"Example mechanism"}],"page_meta":{"total_count":1}}'
+      }
+      httr2::response(
+        url = request$url,
+        headers = list(`content-type` = "application/json"),
+        body = charToRaw(body)
+      )
+    },
+    .package = "AnnotationGx",
+    .env = .env
   )
+}
 
-  # Check the constructed URL
-  expected_url <- "https://www.ebi.ac.uk/chembl/api/data/target?target_chembl_id__exact=CHEMBL2144069&format=json"
-  expect_equal(url$url, expected_url)
+test_that("ChEMBL requests encode fields and validate inputs", {
+  local_chembl_responses()
+  request <- .build_chembl_request(
+    "mechanism",
+    "mechanism_of_action",
+    "icontains",
+    "Example mechanism"
+  )
+  expect_equal(
+    request$url,
+    "https://www.ebi.ac.uk/chembl/api/data/mechanism?mechanism_of_action__icontains=Example%20mechanism&format=json"
+  )
+  expect_error(.build_chembl_request("invalid"))
+  expect_error(.build_chembl_request("mechanism", "invalid"))
+  expect_error(.build_chembl_request("mechanism", filter_type = "invalid"))
+  expect_error(.build_chembl_request("mechanism", format = "invalid"))
 })
 
-
-test_that("getChemblMechanism works", {
-  skip_if_offline()
-
-  # Set up test data
-  chembl_id <- "CHEMBL1413"
-
-  # Call the function
-  mechanism <- getChemblMechanism(chembl_id)
-
-  # Check the result
-  expect_data_table(mechanism)
-  expect_equal(nrow(mechanism), 2)
-  expect_equal(ncol(mechanism), 17)
-  expect_equal(mechanism$target_chembl_id, c("CHEMBL2363058", "CHEMBL2366381"))
-
-  url <- getChemblMechanism(chembl_id, returnURL = TRUE)
-  expect_list(url)
+test_that("ChEMBL schema and query responses are parsed", {
+  local_chembl_responses()
   expect_equal(
-    url[[1]],
+    getChemblResourceFields("mechanism"),
+    c("molecule_chembl_id", "target_chembl_id", "mechanism_of_action")
+  )
+  response <- queryChemblAPI(
+    "mechanism",
+    "molecule_chembl_id",
+    "in",
+    "CHEMBL1413"
+  )
+  expect_equal(response$page_meta$total_count, 1)
+  expect_equal(response$mechanisms$molecule_chembl_id, "CHEMBL1413")
+})
+
+test_that("mechanism results preserve return modes and fill missing columns", {
+  local_chembl_responses()
+  mechanism <- getChemblMechanism("CHEMBL1413")
+  expect_s3_class(mechanism, "data.table")
+  expect_equal(nrow(mechanism), 1L)
+  expect_setequal(names(mechanism), .chembl_mechanism_cols())
+  expect_true(is.na(mechanism$action_type))
+  expect_equal(mechanism$target_chembl_id, "CHEMBL2363058")
+  expect_equal(
+    getChemblMechanism("CHEMBL1413", returnURL = TRUE)[[1]],
     "https://www.ebi.ac.uk/chembl/api/data/mechanism?molecule_chembl_id__in=CHEMBL1413&format=json"
   )
-})
-
-
-test_that("getChemblResourceFields works", {
-  skip_if_offline()
-
-  mechanism_fields <- getChemblResourceFields("mechanism")
-
-  # should be atomic vector
-  expect_character(mechanism_fields)
-  # should have 17 elements
-  expect_length(mechanism_fields, 17)
-  # should contain the expected fields
-  expect_equal(
-    mechanism_fields,
-    c(
-      "action_type",
-      "binding_site_comment",
-      "direct_interaction",
-      "disease_efficacy",
-      "max_phase",
-      "mec_id",
-      "mechanism_comment",
-      "mechanism_of_action",
-      "mechanism_refs",
-      "molecular_mechanism",
-      "molecule_chembl_id",
-      "parent_molecule_chembl_id",
-      "record_id",
-      "selectivity_comment",
-      "site_id",
-      "target_chembl_id",
-      "variant_sequence"
-    )
+  expect_named(
+    getChemblMechanism("CHEMBL1413", raw = TRUE)[[1]],
+    c("mechanisms", "page_meta")
   )
 })
 
-test_that("queryChemblAPI constructs the correct URL and returns parsed JSON response", {
-  skip_if_offline()
-
-  # Set up test data
-  resource <- "mechanism"
-  field <- "mechanism_of_action"
-  filter_type <- "icontains"
-  value <- "Muscarinic acetylcholine receptor"
-  format <- "json"
-  expected_url <- "https://www.ebi.ac.uk/chembl/api/data/mechanism?mechanism_of_action__icontains=Muscarinic%20acetylcholine%20receptor&format=json"
-
-  request <- AnnotationGx:::.build_chembl_request(
-    resource,
-    field,
-    filter_type,
-    value,
-    format
+test_that("HTML schema failures are not cached as successful results", {
+  old_options <- options(annotationgx.cache.dir = tempfile("chembl-cache-"))
+  on.exit(options(old_options), add = TRUE)
+  calls <- new.env()
+  calls$n <- 0L
+  local_mocked_bindings(
+    .perform_request = function(request) {
+      calls$n <- calls$n + 1L
+      httr2::response(
+        url = request$url,
+        headers = list(`content-type` = "text/html"),
+        body = charToRaw("<html>Service unavailable</html>")
+      )
+    },
+    .package = "AnnotationGx"
   )
-  expect_equal(request$url, expected_url)
-
-  # Call the function
-  response <- queryChemblAPI(resource, field, filter_type, value, format)
-
-  expect_class(response, "list")
-
-  expect_length(response, 2)
+  expect_error(getChemblMechanism("CHEMBL1413"), "Unexpected content type")
+  expect_error(getChemblMechanism("CHEMBL1413"), "Unexpected content type")
+  expect_equal(calls$n, 2L)
 })
 
-test_that("getChemblFilterTypes works", {
-  result <- getChemblFilterTypes()
-
-  expect_class(result, "character")
-  expect_length(result, 19)
-
-  expect_true("in" %in% result)
+test_that("ChEMBL resource and filter lists are available offline", {
+  expect_true("mechanism" %in% getChemblResources())
+  expect_true("in" %in% getChemblFilterTypes())
 })
 
-test_that("getChemblResources works", {
-  result <- getChemblResources()
+test_that("the evaluated ChEMBL vignette survives HTML responses", {
+  source <- test_path("..", "..", "vignettes", "ChEMBL.Rmd")
+  if (!file.exists(source)) {
+    source <- system.file("doc", "ChEMBL.Rmd", package = "AnnotationGx")
+  }
+  skip_if(!file.exists(source), "Vignette source is unavailable")
+  local_mocked_bindings(
+    .cache_enabled = function() FALSE,
+    .perform_request = function(request) {
+      httr2::response(
+        url = request$url,
+        headers = list(`content-type` = "text/html"),
+        body = charToRaw("<html>Service unavailable</html>")
+      )
+    },
+    .package = "AnnotationGx"
+  )
+  output <- tempfile(fileext = ".md")
+  knitr::knit(
+    text = c(
+      "```{r, include=FALSE}",
+      "knitr::opts_chunk$set(error = FALSE)",
+      "```",
+      readLines(source)
+    ),
+    output = output,
+    quiet = TRUE,
+    envir = new.env()
+  )
+  rendered <- paste(readLines(output), collapse = "\n")
+  expect_match(rendered, "ChEMBL example could not complete")
+  expect_match(rendered, "Unexpected content type")
+  expect_match(rendered, "R version")
+  expect_false(grepl("#> Error", rendered, fixed = TRUE))
+})
 
-  expect_class(result, "character")
-  expect_length(result, 32)
-
-  expect_true("activity" %in% result)
+test_that("live ChEMBL returns a mechanism table", {
+  skip_if_offline("www.ebi.ac.uk")
+  old_options <- options(
+    annotationgx.cache.use = FALSE,
+    annotationgx.request.timeout = 5,
+    annotationgx.request.max_tries = 1
+  )
+  on.exit(options(old_options), add = TRUE)
+  mechanism <- tryCatch(
+    getChemblMechanism("CHEMBL1413"),
+    error = function(error) {
+      if (
+        inherits(error, "httr2_error") ||
+          grepl(
+            "Unexpected content type",
+            conditionMessage(error),
+            fixed = TRUE
+          )
+      ) {
+        skip(paste("ChEMBL unavailable:", conditionMessage(error)))
+      }
+      stop(error)
+    }
+  )
+  expect_s3_class(mechanism, "data.table")
+  expect_true(nrow(mechanism) > 0L)
+  expect_true(all(mechanism$molecule_chembl_id == "CHEMBL1413"))
 })

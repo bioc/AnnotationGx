@@ -17,6 +17,16 @@ knitr::opts_chunk$set(
   comment = "#>",
   crop = NULL ## Related to https://stat.ethz.ch/pipermail/bioc-devel/2020-April/016656.html
 )
+
+run_chembl_example <- function(expr) {
+  tryCatch(
+    expr,
+    error = function(error) {
+      message("ChEMBL example could not complete: ", conditionMessage(error))
+      NULL
+    }
+  )
+}
 ```
 
 
@@ -62,11 +72,13 @@ resource only. To query other resources, please see the
 
 
 ```{r single-query}
-mechs <- getChemblMechanism("CHEMBL1413")
+mechs <- run_chembl_example(getChemblMechanism("CHEMBL1413"))
 mechs
 ```
 
-In the above example, multiple mechanisms of action are returned. 
+When ChEMBL is available, this example returns mechanisms of action. Live
+examples report request failures and allow the vignette to continue if the
+service is unavailable.
 
 
 ## Custom Queries {#custom-queries}
@@ -81,12 +93,12 @@ A query to the API follows the following format:
 https://www.ebi.ac.uk/chembl/api/data/[resource]?[field]__[filter_type]=[value]&format=[format]
 ```
 More information can be found at the 
-[API Documentation](https://chembl.gitbook.io/chembl-interface-documentation/web-services/chembl-data-web-**services******)
+[API Documentation](https://chembl.gitbook.io/chembl-interface-documentation/web-services/chembl-data-web-services)
 
 In summary, the requirements for a query are:
 
 1. The `resource` to be queried
-2. The reource `field` to be queried
+2. The resource `field` to be queried
 3. The `filter_type` to be used
 4. The `value` to be used for the filter
 5. (optional) The `format` of the returned data (default is JSON)
@@ -110,7 +122,9 @@ to query the ChEMBL API.
 the `queryChemblAPI()` function returns the raw data unformatted**
 
 ```{r custom-query}
-queryChemblAPI("mechanism", "molecule_chembl_id", "in", "CHEMBL1413")
+run_chembl_example(
+  queryChemblAPI("mechanism", "molecule_chembl_id", "in", "CHEMBL1413")
+)
 ```
 
 The `getChemblResources()` function returns a list of possible 
@@ -124,7 +138,7 @@ getChemblResources()
 The `getChemblResourceFields(resource)` function returns a list of possible
 fields that can be queried for a given resource:
 ```{r resource-fields}
-getChemblResourceFields("mechanism")
+run_chembl_example(getChemblResourceFields("mechanism"))
 ```
 
 The `getChemblFilterTypes()` function returns a list of possible filter types.

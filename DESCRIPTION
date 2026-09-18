@@ -34,7 +34,7 @@ Imports:
     xml2
 Suggests: 
     BiocStyle,
-    testthat (>= 3.0.0),
+    testthat (>= 3.2.0),
     covr,
     knitr,
     rmarkdown,
