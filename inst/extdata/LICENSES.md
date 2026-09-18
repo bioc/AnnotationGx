@@ -15,7 +15,6 @@ tables used for examples and annotation workflows.
 
 | File or object | Source | License or terms | Notes |
 | --- | --- | --- | --- |
-| `GDSC_sampleMetadata`, `GDSC_treatmentMetadata` | Genomics of Drug Sensitivity in Cancer (GDSC), <https://www.cancerrxgene.org/>; BHKLab-curated PSet on ORCESTRA: <https://www.orcestra.ca/pset/10.5281/zenodo.3905481> | Public source data; BHKLab-curated/processed PSet released through ORCESTRA/Zenodo. | Derived, column-reduced `data.table` objects used as example metadata. |
 | `CCLE_sampleMetadata`, `CCLE_treatmentMetadata` | Cancer Cell Line Encyclopedia and DepMap/Broad resources, including <https://data.broadinstitute.org/ccle_legacy_data/pharmacological_profiling/CCLE_NP24.2009_profiling_2012.02.20.csv>; BHKLab-curated PSet on ORCESTRA: <https://www.orcestra.ca/pset/10.5281/zenodo.3905462> | Public source data; BHKLab-curated/processed PSet released through ORCESTRA/Zenodo. | Derived, column-reduced `data.table` objects used as example metadata. |
 | `CTRP_sampleMetadata`, `CTRP_treatmentMetadata` | Cancer Therapeutics Response Portal v2 / NCI CTD2, including <https://ctd2-data.nci.nih.gov/Public/Broad/CTRPv2.0_2015_ctd2_ExpandedDataset/CTRPv2.0_2015_ctd2_ExpandedDataset.zip>; BHKLab-curated PSet on ORCESTRA: <https://www.orcestra.ca/pset/10.5281/zenodo.3905470> | Public source data; BHKLab-curated/processed PSet released through ORCESTRA/Zenodo. | Derived, column-reduced `data.table` objects used as example metadata. |
 | `gCSI_sampleMetadata`, `gCSI_treatmentMetadata` | Genentech Cell Line Screening Initiative (gCSI); BHKLab-curated PSet on ORCESTRA: <https://www.orcestra.ca/pset/10.5281/zenodo.4737437> | Public source data generated and shared by Genentech; BHKLab-curated/processed PSet released through ORCESTRA/Zenodo. | Derived, column-reduced `data.table` objects used as example metadata. |
@@ -30,16 +29,26 @@ from the built source package through `.Rbuildignore`:
 
 - `inst/extdata/CCLE`
 - `inst/extdata/CTRP`
-- `inst/extdata/GDSC`
 - `inst/extdata/gCSI`
 - `inst/extdata/CellModelPassports`
-- `inst/extdata/Cell_Lines_Details.xlsx`
 - `inst/extdata/bhklabAnnotationFiles`
 - `inst/extdata/test_cellosaurus_detailed.R`
 
 The excluded raw files are development inputs. They are not needed at runtime
 because the distributed package contains the smaller derived metadata objects
 documented above.
+
+## GDSC Data Downloaded Separately
+
+GDSC metadata are not bundled in AnnotationGx. Obtain the original files
+directly from Sanger when needed:
+
+- [Cell line metadata (release 8.5)](https://cog.sanger.ac.uk/cancerrxgene/GDSC_release8.5/Cell_Lines_Details.xlsx)
+- [Screened compound metadata (release 8.5)](https://cog.sanger.ac.uk/cancerrxgene/GDSC_release8.5/screened_compounds_rel_8.5.csv)
+
+Consult the [GDSC usage policy](https://www.orcestra.ca/pset/10.5281/zenodo.3905481)
+before using these files. The upstream terms restrict resale and provision of
+commercial services; downloading the data does not change those terms.
 
 ## Public Web Services Queried by AnnotationGx
 

@@ -16,11 +16,6 @@ reference:
   - CCLE_sampleMetadata
   - CCLE_treatmentMetadata
 
-- subtitle: GDSC
-  contents:
-  - GDSC_sampleMetadata
-  - GDSC_treatmentMetadata
-
 - subtitle: CTRP
   contents:
   - CTRP_sampleMetadata
@@ -125,4 +120,3 @@ articles:
   contents:
   - articles/AnnotationStandards
   - articles/CTRP-Treatment-Annotation
-

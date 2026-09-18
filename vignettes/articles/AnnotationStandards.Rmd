@@ -107,14 +107,15 @@ For transparency and reproducibility, we should use standardized column names fo
 For example, if we are using the Pubchem and DrugBank database, we might have columns like "pubchem.CID", "pubchem.SMILES", "drugbank.ID", "drugbank.SMILES", etc.
 
 
-This also applies to the data we start with. Take for example the GDSC example data provided:
+This also applies to the data we start with. Take for example the CCLE treatment metadata provided:
 
-```{r gdsc-example}
-data(GDSC_sampleMetadata)
-head(GDSC_sampleMetadata)
+```{r ccle-example}
+data(CCLE_treatmentMetadata)
+head(CCLE_treatmentMetadata)
 ```
 
-The column names above follow both Standard 1 and Standard 2. It tells us that the data for the two columns comes from the GDSC database. 
+The `CCLE.treatmentid` column follows both standards: its prefix identifies
+CCLE as the source of the treatment names.
 
 This is especially useful when we are combining data from multiple sources and they might have columns with the same name.
 Additionally, it provides a level of confidence for users trying to compare data from different sources. 

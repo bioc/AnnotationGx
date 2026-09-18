@@ -11,10 +11,8 @@
 ^inst/extdata/\.DS_Store$
 ^inst/extdata/CCLE$
 ^inst/extdata/CTRP$
-^inst/extdata/GDSC$
 ^inst/extdata/gCSI$
 ^inst/extdata/CellModelPassports$
-^inst/extdata/Cell_Lines_Details[.]xlsx$
 ^inst/extdata/bhklabAnnotationFiles$
 ^inst/extdata/test_cellosaurus_detailed[.]R$
 ^inst/extdata/treatmentMetadata_annotated_pubchem_unichem_chembl[.]tsv$

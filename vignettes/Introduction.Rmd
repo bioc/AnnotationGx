@@ -69,11 +69,11 @@ Load the package and inspect the small example metadata tables:
 
 ```{r load-package, message = FALSE}
 library("AnnotationGx")
-data(GDSC_sampleMetadata)
-data(GDSC_treatmentMetadata)
+data(CCLE_sampleMetadata)
+data(CCLE_treatmentMetadata)
 
-head(GDSC_sampleMetadata)
-head(GDSC_treatmentMetadata)
+head(CCLE_sampleMetadata)
+head(CCLE_treatmentMetadata)
 ```
 
 Build Cellosaurus queries for cell line identifiers:
@@ -94,7 +94,7 @@ Build PubChem PUG-REST queries for treatment names:
 mapCompound2CID(c("erlotinib", "paclitaxel"), query_only = TRUE)
 ```
 
-Run the PubChem query when online examples are enabled:
+Run the PubChem query when an internet connection is available:
 
 ```{r pubchem-online}
 mapCompound2CID(c("erlotinib", "paclitaxel"), first = TRUE)
@@ -121,6 +121,12 @@ The example data objects are derived from public pharmacogenomic resources and
 are documented individually in their help pages. The source package also
 includes `inst/extdata/LICENSES.md`, which records provenance, source links,
 and redistribution notes for bundled data.
+
+GDSC metadata must be obtained separately from the official Sanger
+[cell line download](https://cog.sanger.ac.uk/cancerrxgene/GDSC_release8.5/Cell_Lines_Details.xlsx)
+and [compound download](https://cog.sanger.ac.uk/cancerrxgene/GDSC_release8.5/screened_compounds_rel_8.5.csv).
+These files are subject to the upstream
+[GDSC usage policy](https://www.orcestra.ca/pset/10.5281/zenodo.3905481).
 
 ```{r data-license-path}
 system.file("extdata", "LICENSES.md", package = "AnnotationGx")
