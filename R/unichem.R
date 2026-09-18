@@ -23,6 +23,7 @@
 #'
 #'
 #' @return A data.table with the list of sources in UniChem.
+#'   Release metadata not provided by UniChem are returned as `NA`.
 #' @examples
 #' # Requires internet connection to UniChem
 #' if (interactive()) {
@@ -55,6 +56,23 @@ getUnichemSources <- function(all_columns = FALSE) {
       )
 
       sources_dt <- .asDT(response$sources)
+
+      # UniChem now uses srcLastUpdated and omits release metadata.
+      if (!"lastUpdated" %in% names(sources_dt)) {
+        sources_dt[["lastUpdated"]] <- if (
+          "srcLastUpdated" %in% names(sources_dt)
+        ) {
+          sources_dt[["srcLastUpdated"]]
+        } else {
+          NA_character_
+        }
+      }
+      if (!"srcReleaseDate" %in% names(sources_dt)) {
+        sources_dt[["srcReleaseDate"]] <- NA_character_
+      }
+      if (!"srcReleaseNumber" %in% names(sources_dt)) {
+        sources_dt[["srcReleaseNumber"]] <- NA_integer_
+      }
 
       old_names <- c(
         "UCICount",

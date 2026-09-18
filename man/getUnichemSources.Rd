@@ -28,6 +28,7 @@ Returns a \code{data.table} with the following columns:
 }
 \value{
 A data.table with the list of sources in UniChem.
+Release metadata not provided by UniChem are returned as \code{NA}.
 }
 \description{
 Get the list of sources in UniChem.
