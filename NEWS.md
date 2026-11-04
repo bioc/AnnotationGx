@@ -1,3 +1,11 @@
+# Changes in version 0.99.12
+
+- Identify CC BY 4.0 explicitly for every bundled metadata object and the
+  Cellosaurus field table, with source license evidence and attribution.
+- Clarify that the generated annotated treatment TSV and its development
+  article are excluded from the source package and unused at runtime.
+- Exclude recipe.yaml and recipes.yaml from the source package.
+
 # Changes in version 0.99.11
 
 - Remove bundled GDSC metadata and dedicated source files; direct users to

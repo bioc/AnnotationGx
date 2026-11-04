@@ -1,31 +1,66 @@
 # Bundled Data Provenance and Licensing
 
-This file records the provenance of data distributed in the AnnotationGx
-source package. The package license covers AnnotationGx code. Upstream data
-remain subject to their original source licenses, terms of use, and citation
-requirements.
+AnnotationGx code is licensed under GPL-3. The data below retain their
+upstream licenses; GPL-3 does not replace those licenses. The complete
+inventory of bundled data is six `data/*.rda` files (one object per file)
+and `inst/extdata/cellosaurus_fields.tsv`. No full PharmacoSet is bundled.
 
-## Runtime Data Distributed in the Package
+## Data Distributed in the Source Package
 
-The example metadata objects are derived from public pharmacogenomic datasets
-whose PharmacoSet (PSet) RDS objects are curated, processed, and released by
-BHKLab through ORCESTRA/Zenodo. The full RDS PSet objects are not bundled in
-AnnotationGx; this package distributes only small, column-reduced metadata
-tables used for examples and annotation workflows.
+Every file and object in this table is distributed under **Creative Commons
+Attribution 4.0 International (CC-BY-4.0)**:
+<https://creativecommons.org/licenses/by/4.0/>.
 
-| File or object | Source | License or terms | Notes |
+| Bundled file | Object | Source and explicit license statement | Changes made for AnnotationGx |
 | --- | --- | --- | --- |
-| `CCLE_sampleMetadata`, `CCLE_treatmentMetadata` | Cancer Cell Line Encyclopedia and DepMap/Broad resources, including <https://data.broadinstitute.org/ccle_legacy_data/pharmacological_profiling/CCLE_NP24.2009_profiling_2012.02.20.csv>; BHKLab-curated PSet on ORCESTRA: <https://www.orcestra.ca/pset/10.5281/zenodo.3905462> | Public source data; BHKLab-curated/processed PSet released through ORCESTRA/Zenodo. | Derived, column-reduced `data.table` objects used as example metadata. |
-| `CTRP_sampleMetadata`, `CTRP_treatmentMetadata` | Cancer Therapeutics Response Portal v2 / NCI CTD2, including <https://ctd2-data.nci.nih.gov/Public/Broad/CTRPv2.0_2015_ctd2_ExpandedDataset/CTRPv2.0_2015_ctd2_ExpandedDataset.zip>; BHKLab-curated PSet on ORCESTRA: <https://www.orcestra.ca/pset/10.5281/zenodo.3905470> | Public source data; BHKLab-curated/processed PSet released through ORCESTRA/Zenodo. | Derived, column-reduced `data.table` objects used as example metadata. |
-| `gCSI_sampleMetadata`, `gCSI_treatmentMetadata` | Genentech Cell Line Screening Initiative (gCSI); BHKLab-curated PSet on ORCESTRA: <https://www.orcestra.ca/pset/10.5281/zenodo.4737437> | Public source data generated and shared by Genentech; BHKLab-curated/processed PSet released through ORCESTRA/Zenodo. | Derived, column-reduced `data.table` objects used as example metadata. |
-| `inst/extdata/cellosaurus_fields.tsv` | Cellosaurus field definitions, <https://www.cellosaurus.org/> | Cellosaurus is distributed under Creative Commons Attribution 4.0 International (CC BY 4.0), see <https://www.cellosaurus.org/faq>. | Used by `cellosaurus_fields()` and Cellosaurus request validation. |
-| `inst/extdata/treatmentMetadata_annotated_pubchem_unichem_chembl.tsv` | AnnotationGx-derived treatment annotation table assembled from package example treatment metadata and PubChem, UniChem, and ChEMBL identifiers | Source treatment metadata derive from public datasets and BHKLab-curated ORCESTRA PSets listed above. PubChem use is subject to NCBI policies, UniChem to EMBL-EBI terms, and ChEMBL to its published license terms. | Used by the annotation standards article, which is not built in the Bioconductor source package. |
+| `data/CCLE_sampleMetadata.rda` | `CCLE_sampleMetadata` | Broad Institute Cancer Cell Line Encyclopedia (CCLE)/DepMap; [CCLE record, Data Usage Policy](https://zenodo.org/records/3905462) explicitly identifies CC BY 4.0 for CCLE data. | Selected cell line identifiers and names; added a parsed cell line identifier. |
+| `data/CCLE_treatmentMetadata.rda` | `CCLE_treatmentMetadata` | Broad Institute CCLE legacy pharmacological profiling; [CCLE record, Data Usage Policy](https://zenodo.org/records/3905462) explicitly identifies CC BY 4.0 for CCLE data. | Selected unique treatment names and renamed the column. |
+| `data/CTRP_sampleMetadata.rda` | `CTRP_sampleMetadata` | Broad Institute CTD2 Center, Cancer Therapeutics Response Portal v2 (CTRPv2); [CTRPv2 record, Data Usage Policy](https://zenodo.org/records/3905470) explicitly identifies CC BY 4.0 for CTRPv2 data. | Selected cell line identifiers and names. |
+| `data/CTRP_treatmentMetadata.rda` | `CTRP_treatmentMetadata` | Broad Institute CTD2 Center, CTRPv2; [CTRPv2 record, Data Usage Policy](https://zenodo.org/records/3905470) explicitly identifies CC BY 4.0 for CTRPv2 data. | Selected compound names and Broad identifiers; renamed columns. |
+| `data/gCSI_sampleMetadata.rda` | `gCSI_sampleMetadata` | Genentech Cell Line Screening Initiative (gCSI); [gCSI record, Data Usage Policy](https://zenodo.org/records/4737437) explicitly identifies CC BY 4.0 for gCSI data. | Selected cell line names and ENA sample accessions. |
+| `data/gCSI_treatmentMetadata.rda` | `gCSI_treatmentMetadata` | Genentech gCSI; [gCSI record, Data Usage Policy](https://zenodo.org/records/4737437) explicitly identifies CC BY 4.0 for gCSI data. | Selected unique drug names and normalized names; renamed columns. |
+| `inst/extdata/cellosaurus_fields.tsv` | Not an R data object | Cellosaurus, CALIPHO group at the SIB Swiss Institute of Bioinformatics; [Cellosaurus FAQ, question 22](https://www.cellosaurus.org/faq#Q22) explicitly identifies CC BY 4.0. | Tabulated field definitions used by `cellosaurus_fields()` and request validation. |
+
+The linked BHKLab/ORCESTRA Zenodo records reproduce the source data usage
+policies. These explicit CC BY 4.0 statements, rather than public accessibility
+alone, are the license evidence for the metadata above. The development
+extraction scripts are in `data-raw/`; they select columns from the original
+metadata files, not from the full PSet RDS files. License statements verified
+on 2026-11-04.
+
+### Attribution and references
+
+Retain the source credits and CC BY 4.0 license link above when redistributing
+these data, and indicate further modifications. The original providers do not
+endorse AnnotationGx.
+
+- **CCLE:** Data generated and shared by the Broad Institute of Harvard and
+  MIT. Barretina et al. (2012), *The Cancer Cell Line Encyclopedia enables
+  predictive modelling of anticancer drug sensitivity*,
+  <https://doi.org/10.1038/nature11003>. Cell line characterization:
+  Ghandi et al. (2019), <https://doi.org/10.1038/s41586-019-1186-3>.
+  BHKLab PSet record: <https://doi.org/10.5281/zenodo.3905462>.
+- **CTRPv2:** Data generated by the Broad Institute CTD2 Center.
+  Seashore-Ludlow et al. (2015), *Harnessing connectivity in a large-scale
+  small-molecule sensitivity dataset*,
+  <https://doi.org/10.1158/2159-8290.CD-15-0235>; Rees et al. (2016),
+  <https://doi.org/10.1038/nchembio.1986>.
+  BHKLab PSet record: <https://doi.org/10.5281/zenodo.3905470>.
+- **gCSI:** Data generated and shared by Genentech (Eva Lin, Yihong Yu,
+  Scott Martin, Department of Discovery Oncology). Klijn et al. (2015),
+  <https://doi.org/10.1038/nbt.3080>; Haverty et al. (2016),
+  *Reproducible pharmacogenomic profiling of cancer cell line panels*,
+  <https://doi.org/10.1038/nature17987>.
+  BHKLab PSet record: <https://doi.org/10.5281/zenodo.4737437>.
+  Genentech supplies the original experimental data as is, without warranties
+  or regulatory certification.
+- **Cellosaurus:** Amos Bairoch and the CALIPHO group at SIB. Bairoch (2018),
+  *The Cellosaurus, a cell-line knowledge resource*,
+  <https://doi.org/10.7171/jbt.18-2902-002>.
 
 ## Development Data Excluded from the Source Package
 
-The repository retains some raw source files under `inst/extdata` so that the
-data objects can be regenerated during development. These files are excluded
-from the built source package through `.Rbuildignore`:
+These repository files are excluded by `.Rbuildignore` and are not installed:
 
 - `inst/extdata/CCLE`
 - `inst/extdata/CTRP`
@@ -33,10 +68,17 @@ from the built source package through `.Rbuildignore`:
 - `inst/extdata/CellModelPassports`
 - `inst/extdata/bhklabAnnotationFiles`
 - `inst/extdata/test_cellosaurus_detailed.R`
+- `inst/extdata/treatmentMetadata_annotated_pubchem_unichem_chembl.tsv`
+- `data-raw`
+- `vignettes/articles`
 
-The excluded raw files are development inputs. They are not needed at runtime
-because the distributed package contains the smaller derived metadata objects
-documented above.
+The annotated treatment TSV is a development-only generated table referenced
+by `vignettes/articles/AnnotationStandards.Rmd`. Both that article and the TSV
+are excluded from the Bioconductor source package. No installed function,
+built vignette, or package example uses the TSV. It is deliberately absent
+from the tarball and is not part of the licensed bundled-data inventory above.
+Its composite upstream permissions have not been established here; do not
+redistribute it as package data without a separate license review.
 
 ## GDSC Data Downloaded Separately
 
@@ -52,8 +94,8 @@ commercial services; downloading the data does not change those terms.
 
 ## Public Web Services Queried by AnnotationGx
 
-AnnotationGx also provides wrappers around public web services. Query results
-are not bundled unless explicitly written into package data.
+API responses are downloaded on request, not bundled. Consult the provider's
+terms for the results you retrieve; no blanket license is asserted for them.
 
 | Service | Terms or license reference |
 | --- | --- |

@@ -29,3 +29,4 @@
 ^AnnotationGx_.*[.]tar[.]gz$
 ^\.quarto$
 ^vignettes/articles$
+^recipes?[.]yaml$
