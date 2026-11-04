@@ -1,4 +1,4 @@
-# Changes in version 0.99.12
+# Changes in version 0.99.13
 
 - Identify CC BY 4.0 explicitly for every bundled metadata object and the
   Cellosaurus field table, with source license evidence and attribution.
