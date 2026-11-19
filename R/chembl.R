@@ -112,7 +112,14 @@
 #' @return The response from the ChEMBL API in JSON format.
 #'
 #' @examples
-#' queryChemblAPI("mechanism", "molecule_chembl_id", "in", "CHEMBL1413")
+#' # Requires the live ChEMBL service.
+#' tryCatch({
+#'   queryChemblAPI("mechanism", "molecule_chembl_id", "in", "CHEMBL1413")
+#' },
+#' httr2_failure = function(e) message("ChEMBL unavailable: ", conditionMessage(e)),
+#' annotationgx_chembl_unavailable = function(e) {
+#'   message("ChEMBL unavailable: ", conditionMessage(e))
+#' })
 #'
 #' @export
 queryChemblAPI <- function(
@@ -134,7 +141,7 @@ queryChemblAPI <- function(
     FUN = function() {
       .build_chembl_request(resource, field, filter_type, value, format) |>
         .perform_request() |>
-        .parse_resp_json()
+        .parse_chembl_json()
     }
   )
 }
@@ -154,11 +161,18 @@ queryChemblAPI <- function(
 #' @return A data.table containing the retrieved mechanism information.
 #'
 #' @examples
-#' getChemblMechanism("CHEMBL1413")
-#' getChemblMechanism("CHEMBL1413",
-#'   resources = "mechanism", field = "molecule_chembl_id",
-#'   filter_type = "in", returnURL = FALSE, raw = FALSE
-#' )
+#' # Requires the live ChEMBL service.
+#' tryCatch({
+#'   getChemblMechanism("CHEMBL1413")
+#'   getChemblMechanism("CHEMBL1413",
+#'     resources = "mechanism", field = "molecule_chembl_id",
+#'     filter_type = "in", returnURL = FALSE, raw = FALSE
+#'   )
+#' },
+#' httr2_failure = function(e) message("ChEMBL unavailable: ", conditionMessage(e)),
+#' annotationgx_chembl_unavailable = function(e) {
+#'   message("ChEMBL unavailable: ", conditionMessage(e))
+#' })
 #'
 #' @export
 getChemblMechanism <- function(
@@ -229,7 +243,14 @@ getChemblMechanism <- function(
 #' @return A character vector containing the names of the fields.
 #'
 #' @examples
-#' getChemblResourceFields("molecule")
+#' # Requires the live ChEMBL service.
+#' tryCatch({
+#'   getChemblResourceFields("molecule")
+#' },
+#' httr2_failure = function(e) message("ChEMBL unavailable: ", conditionMessage(e)),
+#' annotationgx_chembl_unavailable = function(e) {
+#'   message("ChEMBL unavailable: ", conditionMessage(e))
+#' })
 #'
 #' @export
 getChemblResourceFields <- function(resource) {

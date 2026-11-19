@@ -363,19 +363,19 @@ AttributeSet <- R6::R6Class(
 #'
 #' @examples
 #' # Create a client object (no network call required)
-#' client <- BioMartClient$new("https://www.ensembl.org")
+#' client <- BioMartClient$new("https://biomart.genenames.org")
 #' client$path
 #'
 #' \donttest{
-#' # Create a client for Ensembl BioMart
-#' client <- BioMartClient$new("https://www.ensembl.org")
+#' # Create a client for HGNC BioMart
+#' client <- BioMartClient$new("https://biomart.genenames.org")
 #'
 #' # Get available marts
 #' marts <- client$get_marts()
 #'
 #' # Select a mart and get its datasets
-#' ensembl <- marts[[1]]
-#' datasets <- client$get_datasets(ensembl)
+#' hgnc <- marts[[1]]
+#' datasets <- client$get_datasets(hgnc)
 #' }
 #'
 #' @export

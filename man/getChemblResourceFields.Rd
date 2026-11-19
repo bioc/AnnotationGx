@@ -16,6 +16,13 @@ A character vector containing the names of the fields.
 This function retrieves the fields of a Chembl resource.
 }
 \examples{
-getChemblResourceFields("molecule")
+# Requires the live ChEMBL service.
+tryCatch({
+  getChemblResourceFields("molecule")
+},
+httr2_failure = function(e) message("ChEMBL unavailable: ", conditionMessage(e)),
+annotationgx_chembl_unavailable = function(e) {
+  message("ChEMBL unavailable: ", conditionMessage(e))
+})
 
 }

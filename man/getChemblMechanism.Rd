@@ -33,10 +33,17 @@ A data.table containing the retrieved mechanism information.
 This function retrieves information about the mechanism of action for a given ChEMBL ID.
 }
 \examples{
-getChemblMechanism("CHEMBL1413")
-getChemblMechanism("CHEMBL1413",
-  resources = "mechanism", field = "molecule_chembl_id",
-  filter_type = "in", returnURL = FALSE, raw = FALSE
-)
+# Requires the live ChEMBL service.
+tryCatch({
+  getChemblMechanism("CHEMBL1413")
+  getChemblMechanism("CHEMBL1413",
+    resources = "mechanism", field = "molecule_chembl_id",
+    filter_type = "in", returnURL = FALSE, raw = FALSE
+  )
+},
+httr2_failure = function(e) message("ChEMBL unavailable: ", conditionMessage(e)),
+annotationgx_chembl_unavailable = function(e) {
+  message("ChEMBL unavailable: ", conditionMessage(e))
+})
 
 }

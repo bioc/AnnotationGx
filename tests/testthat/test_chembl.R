@@ -144,12 +144,8 @@ test_that("live ChEMBL returns a mechanism table", {
     getChemblMechanism("CHEMBL1413"),
     error = function(error) {
       if (
-        inherits(error, "httr2_error") ||
-          grepl(
-            "Unexpected content type",
-            conditionMessage(error),
-            fixed = TRUE
-          )
+        inherits(error, "httr2_failure") ||
+          inherits(error, "annotationgx_chembl_unavailable")
       ) {
         skip(paste("ChEMBL unavailable:", conditionMessage(error)))
       }
@@ -159,4 +155,58 @@ test_that("live ChEMBL returns a mechanism table", {
   expect_s3_class(mechanism, "data.table")
   expect_true(nrow(mechanism) > 0L)
   expect_true(all(mechanism$molecule_chembl_id == "CHEMBL1413"))
+})
+
+test_that("ChEMBL distinguishes service outages from other errors", {
+  response <- function(status = 200L, type = "application/json", body = "{}") {
+    httr2::response(
+      status_code = status,
+      headers = list(`content-type` = type),
+      body = charToRaw(body)
+    )
+  }
+  for (status in c(429L, 500L, 502L, 503L)) {
+    expect_error(
+      .parse_chembl_json(response(status)),
+      class = "annotationgx_chembl_unavailable"
+    )
+  }
+  expect_error(
+    .parse_chembl_json(response(type = "text/html", body = "<html>")),
+    class = "annotationgx_chembl_unavailable"
+  )
+  expect_error(.parse_chembl_json(response(400L)), class = "httr2_http_400")
+  expect_error(.parse_chembl_json(response(401L)), class = "httr2_http_401")
+  expect_error(.parse_chembl_json(response(body = "not JSON")), "lexical error")
+  expect_equal(.parse_chembl_json(response(body = '{"ok":true}')), list(ok = TRUE))
+})
+
+test_that("evaluated Rd examples handle outages but retain programming errors", {
+  local_mocked_bindings(.cache_enabled = function() FALSE,
+    .package = "AnnotationGx")
+  mode <- "html"
+  local_mocked_bindings(
+    .perform_request = function(request) {
+      if (mode == "bug") stop("deliberate programming error")
+      if (mode == "network") {
+        stop(errorCondition("connection failed", class = "httr2_failure"))
+      }
+      httr2::response(
+        headers = list(`content-type` = "text/html"),
+        body = charToRaw("<html>Service unavailable</html>")
+      )
+    }, .package = "AnnotationGx"
+  )
+  for (topic in c("getChemblMechanism", "getChemblResourceFields", "queryChemblAPI")) {
+    rd <- test_path("..", "..", "man", paste0(topic, ".Rd"))
+    skip_if(!file.exists(rd), "Rd sources are unavailable")
+    script <- tempfile(fileext = ".R")
+    tools::Rd2ex(rd, out = script)
+    for (failure in c("html", "network")) {
+      mode <- failure
+      expect_message(sys.source(script, envir = new.env()), "ChEMBL unavailable")
+    }
+    mode <- "bug"
+    expect_error(sys.source(script, envir = new.env()), "deliberate programming error")
+  }
 })

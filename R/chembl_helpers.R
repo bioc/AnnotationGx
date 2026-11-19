@@ -100,7 +100,32 @@
     FUN = function() {
       .build_chembl_request(paste0(resource, "/schema")) |>
         .perform_request() |>
-        .parse_resp_json()
+        .parse_chembl_json()
     }
   )
+}
+
+#' Parse a ChEMBL response without treating service failures as data
+#' @keywords internal
+#' @noRd
+.parse_chembl_json <- function(resp) {
+  status <- httr2::resp_status(resp)
+  content_type <- httr2::resp_content_type(resp)
+  unavailable <- status == 429L || status >= 500L
+  html <- status >= 200L && status < 300L &&
+    content_type %in% c("text/html", "application/xhtml+xml")
+  if (unavailable || html) {
+    detail <- if (html) {
+      paste0('Unexpected content type "', content_type, '" instead of JSON')
+    } else {
+      paste("HTTP", status)
+    }
+    stop(errorCondition(
+      paste0("ChEMBL service unavailable: ", detail, "."),
+      class = "annotationgx_chembl_unavailable"
+    ))
+  }
+  # Authentication, invalid requests, malformed JSON and other errors still fail.
+  httr2::resp_check_status(resp)
+  .parse_resp_json(resp)
 }

@@ -24,6 +24,13 @@ The response from the ChEMBL API in JSON format.
 This function queries the ChEMBL API using the specified parameters and returns the response in JSON format.
 }
 \examples{
-queryChemblAPI("mechanism", "molecule_chembl_id", "in", "CHEMBL1413")
+# Requires the live ChEMBL service.
+tryCatch({
+  queryChemblAPI("mechanism", "molecule_chembl_id", "in", "CHEMBL1413")
+},
+httr2_failure = function(e) message("ChEMBL unavailable: ", conditionMessage(e)),
+annotationgx_chembl_unavailable = function(e) {
+  message("ChEMBL unavailable: ", conditionMessage(e))
+})
 
 }

@@ -21,7 +21,11 @@ knitr::opts_chunk$set(
 run_chembl_example <- function(expr) {
   tryCatch(
     expr,
-    error = function(error) {
+    httr2_failure = function(error) {
+      message("ChEMBL example could not complete: ", conditionMessage(error))
+      NULL
+    },
+    annotationgx_chembl_unavailable = function(error) {
       message("ChEMBL example could not complete: ", conditionMessage(error))
       NULL
     }

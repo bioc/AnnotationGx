@@ -1,3 +1,9 @@
+# Changes in version 0.99.14
+
+- Handle ChEMBL service outages in live examples without hiding input or
+  JSON parsing errors. Keep service failures out of the response cache.
+- Point the BioMart client example at the supported HGNC JSON service.
+
 # Changes in version 0.99.13
 
 - Identify CC BY 4.0 explicitly for every bundled metadata object and the
