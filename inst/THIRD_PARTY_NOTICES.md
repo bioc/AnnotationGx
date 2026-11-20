@@ -9,7 +9,7 @@ AcidBase R package.
 - Upstream package documentation: <https://r.acidgenomics.com/packages/acidbase/>
 - Author and maintainer: Michael Steinbaugh
 - Copyright holder/funder: Acid Genomics
-- Upstream license: Apache License (>= 2)
+- Upstream license: [Apache License 2.0](licenses/AcidBase-LICENSE.md)
 - Upstream version checked for attribution: AcidBase 0.7.7, dated 2026-06-20
 
 Apache License 2.0 is compatible with GPL version 3, which is the license used

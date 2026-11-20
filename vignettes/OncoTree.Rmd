@@ -49,8 +49,8 @@ library(AnnotationGx)
 AnnotationGx provides a set of functions for querying OncoTree to retrieve
 three types of information:
 - OncoTree release versions
-- Main Cancer types
-- Subtypes of a specific cancer type and their relationships
+- Main cancer types
+- Tumor types
 
 ## OncoTree release versions
 
@@ -59,17 +59,16 @@ The `getOncotreeVersions` function retrieves the available OncoTree release.
 getOncotreeVersions()
 ```
 
-## Main Cancer types
+## Main cancer types
 
-The `getMainCancerTypes` function retrieves the main cancer types in OncoTree.
+`getOncotreeMainTypes()` retrieves the main cancer types in OncoTree.
 ```{r main-cancer-types}
 getOncotreeMainTypes()
 ```
 
-## Subtypes of a specific cancer type
+## Tumor types
 
-The `getCancerSubtypes` function retrieves the subtypes of a specific cancer 
-type.
+`getOncotreeTumorTypes()` retrieves the tumor types in OncoTree.
 ```{r cancer-subtypes}
 getOncotreeTumorTypes()
 ```
